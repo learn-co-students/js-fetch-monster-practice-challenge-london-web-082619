@@ -18,32 +18,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
 })
 
+function createNewMonster(event) {
+    event.preventDefault()
 
+    let monsterForm = document.getElementById(`monster-form`);
+    
+    let monsterFormData = {
+        name: monsterForm.name.value,
+        age: monsterForm.age.value,
+        description: monsterForm.description.value
+    }
+
+    let configObject = {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(monsterFormData)
+    }
+
+    fetch(monstersURL, configObject)
+        .then(response => response.json())
+        .then(monster => renderMonster(monster)) 
+        .catch(function(error){
+            console.log(error.message);
+        })
+}
 
 function buildMonsterForm() {
 
-    monsterForm = document.createElement('form');
+    let monsterForm = document.createElement('form');
     monsterForm.id = 'monster-form';
     createMonster.appendChild(monsterForm);
 
-    nameInput = document.createElement('input');
+    let nameInput = document.createElement('input');
     nameInput.id = 'name';
     nameInput.placeholder = 'Name';
     monsterForm.appendChild(nameInput);
 
-    ageInput = document.createElement('input');
+    let ageInput = document.createElement('input');
     ageInput.id = 'age';
     ageInput.placeholder = 'Age';
     monsterForm.appendChild(ageInput);
 
-    descriptionInput = document.createElement('input');
+    let descriptionInput = document.createElement('input');
     descriptionInput.id = 'description';
     descriptionInput.placeholder = 'Description';
     monsterForm.appendChild(descriptionInput);
 
-    button = document.createElement('button');
+    let button = document.createElement('input');
+    button.type = 'submit'
     button.innerText = 'Create'
     monsterForm.appendChild(button);
+
+    monsterForm.addEventListener('submit', createNewMonster)
 }
 
 function getMonsters(pageNumber) {
