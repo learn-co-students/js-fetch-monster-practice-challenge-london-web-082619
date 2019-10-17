@@ -1,14 +1,20 @@
 const monList = document.querySelector("#monster-container");
 const monForm = document.querySelector("#monster-form")
+let pageNumber = 1;
+const backButton = document.querySelector("#back");
+const forwardButton = document.querySelector("#forward");
 
+//get data
+API.getMons(pageNumber)
+.then(monsOnThePage => renderMons(monsOnThePage))
 
-API.getMons50()
-.then(mons50 => renderMons(mons50));
 
 // //itration
-const renderMons = function(mons50){
-    console.log(mons50);
-    for(const mon of mons50){
+const renderMons = function(monsOnThePage){
+    console.log(monsOnThePage);
+    while (monList.firstChild)
+      monList.removeChild(monList.firstChild)
+    for(const mon of monsOnThePage){
         renderMon(mon)
     };
     // //when took more than 50 mons from the database
@@ -18,6 +24,8 @@ const renderMons = function(mons50){
 
 //list mons
 const renderMon = function(mon){
+    
+
     const div = document.createElement("div")
     div.id = `mon-${mon.id}`
     const h2 = document.createElement("h2")
@@ -36,5 +44,22 @@ monForm.addEventListener("submit", function(e){
         age: e.target.elements.age.value,
         description: e.target.elements.description.value
     };
-    postNewMon(newMon)
-})
+    postNewMon(newMon);
+    e.target.reset();
+});
+
+backButton.addEventListener('click', (e) => {
+    let currentPageNumber = pageNumber
+    currentPageNumber > 1 ? currentPageNumber-- : currentPageNumber
+    API.getMons(pageNumber)
+    .then(monsOnThePage => renderMons(monsOnThePage))
+  })
+
+forwardButton.addEventListener('click', (e) => {
+    const upperLimit = 20 // 1000/50 
+    let currentPageNumber = pageNumber
+    currentPageNumber < upperLimit ? currentPageNumber++ : currentPageNumber
+    API.getMons(currentPageNumber)
+    .then(monsOnThePage => renderMons(monsOnThePage))
+    
+  })    
